@@ -1,0 +1,49 @@
+# OS artifacts
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Editor artifacts
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+/tmp/
+*.tmp
+*.bak
+*.orig
+
+# Extracted .deb working directories
+extracted/
+extracted_folder/
+*_extracted/
+
+# Generated payload files (never commit real payloads)
+payload.py
+payload.b64
+*.payload
+
+# Rebuilt / modified .deb packages (keep only the sample)
+new_malicious.deb
+*_malicious.deb
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# Logs
+*.log
